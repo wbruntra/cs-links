@@ -18,9 +18,14 @@
         <p>
             <a href="<%= link %>"><%= link %></a>
         </p>
+        <p>
+            <a href="<%= link %>" class="pure-button pure-button-primary">Go!</a>
+        </p>
         
+        <p>================================ </p>
+
         <p>Copy link for sharing:</p>
-        <input hidden type="text" id="copyTarget" value="<%= pagelink %>"> <button class="pure-button pure-button-primary" id="copyButton">Share Link</button><br><br>
+        <input hidden type="text" id="copyTarget" value="<%= pagelink %>"> <button class="pure-button button-secondary" id="copyButton">Share Link</button><br><br>
 
 
         <script src="/js/copier.js"></script>

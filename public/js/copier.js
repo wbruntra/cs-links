@@ -51,7 +51,7 @@ function copyToClipboard(elem) {
     // clear temporary content
     target.textContent = ''
   }
-  copyButton.classList.remove('pure-button-primary')
+  copyButton.classList.remove('button-secondary')
   copyButton.classList.add('button-success')
   copyButton.innerText = 'Copied!'
   return succeed
