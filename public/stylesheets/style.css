@@ -25,6 +25,10 @@ p {
   margin-top: 24px;
 }
 
+.error {
+  color: red;
+}
+
 a {
   color: #00b7ff;
 }

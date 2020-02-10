@@ -7,6 +7,7 @@ $(document).ready(function() {
       console.log('valid uri!')
     } else {
       console.log('not a valid uri. submit prevented')
+      $('#error').text('Invalid link')
       e.preventDefault()
     }
   }
