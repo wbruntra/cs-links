@@ -29,6 +29,11 @@ p {
   color: red;
 }
 
+.button-success {
+  color: white;
+  background: rgb(28, 184, 65); /* this is a green */
+}
+
 a {
   color: #00b7ff;
 }

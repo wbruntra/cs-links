@@ -24,10 +24,11 @@ router.post('/link', (req, res) => {
 
 router.get('/k/:code', (req, res) => {
   const code = req.params.code
+  const pagelink = `${process.env.BASE}/k/${code}`
   Link.findOne({
     where: { code: code },
   }).then((link) => {
-    res.render('link', { link: link.address })
+    res.render('link', { link: link.address, pagelink })
   })
 })
 
