@@ -1,0 +1,30 @@
+body {
+  padding: 20px;
+  font: 14px 'Lucida Grande', Helvetica, Arial, sans-serif;
+}
+
+#link-page {
+  font: 16px 'Courier New', Courier, monospace;
+}
+
+input[type='text'] {
+  width: 20em;
+}
+
+@media only screen and (min-width: 600px) {
+  input[type='text'] {
+    width: 30em;
+  }
+}
+
+input[type='submit'] {
+  margin-top: 8px;
+}
+
+p {
+  margin-top: 24px;
+}
+
+a {
+  color: #00b7ff;
+}
