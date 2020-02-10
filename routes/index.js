@@ -28,6 +28,9 @@ router.get('/k/:code', (req, res) => {
   Link.findOne({
     where: { code: code },
   }).then((link) => {
+    if (!link) {
+      return res.send('Error: Link not registered')
+    }
     res.render('link', { link: link.address, pagelink })
   })
 })
