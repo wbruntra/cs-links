@@ -2,35 +2,41 @@
 <html>
 
 <head>
-    <title>Link</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.1/build/pure-min.css"
+  <title>Link</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.1/build/pure-min.css"
     integrity="sha384-oAOxQR6DkCoMliIh8yFnu25d7Eq/PHS21PClpwjOTeU2jRSq11vu66rf90/cZr47" crossorigin="anonymous">
 
 
-    <link rel='stylesheet' href='/stylesheets/style.css' />
+  <link rel='stylesheet' href='/stylesheets/style.css' />
 </head>
 
 <body>
-    <div id="link-page">
-        <h1>Link</h1>
-        <p>Here is the link:</p>
-        <p>
-            <a href="<%= link %>"><%= link %></a>
-        </p>
-        <p>
-            <a href="<%= link %>" class="pure-button pure-button-primary">Go!</a>
-        </p>
-        
-        <p>================================ </p>
+  <div id="link-page">
+    <h1>Link</h1>
+    <p>Here is the link:</p>
+    <p>
+      <a href="<%= link %>"><%= link %></a>
+    </p>
+    <p>
+      <a href="<%= link %>" class="pure-button pure-button-primary">Go!</a>
+    </p>
 
-        <p>Copy link for sharing:</p>
-        <input hidden type="text" id="copyTarget" value="<%= pagelink %>"> <button class="pure-button button-secondary" id="copyButton">Share Link</button><br><br>
+    <p>================================ </p>
+
+    <p>Copy link for sharing:</p>
+    <input hidden type="text" id="copy-button-target" value="<%= pagelink %>"> <button class="pure-button button-secondary"
+      id="copy-button">Share Link</button><br><br>
 
 
-        <script src="/js/copier.js"></script>
-    </div>
+    <p>Copy link but skip this page:</p>
+    <input hidden type="text" id="copy-button-2-target" value="<%= directlink %>">
+    <button class="pure-button button-secondary" id="copy-button-2">Share Link</button><br><br>
+
+
+    <script src="/js/copier.js"></script>
+  </div>
 </body>
 
 </html>

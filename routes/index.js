@@ -6,7 +6,7 @@ var Link = require('../models/Link')
 // var sequelize = require('sequelize')
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
+router.get('/', function (req, res, next) {
   res.render('index', { title: 'Express' })
 })
 
@@ -25,13 +25,24 @@ router.post('/link', (req, res) => {
 router.get('/k/:code', (req, res) => {
   const code = req.params.code
   const pagelink = `${process.env.BASE}/k/${code}`
+  const directlink = `${process.env.BASE}/g/${code}`
   Link.findOne({
     where: { code: code },
   }).then((link) => {
     if (!link) {
       return res.send('Error: Link not registered')
     }
-    res.render('link', { link: link.address, pagelink })
+    res.render('link', { link: link.address, pagelink, directlink })
+  })
+})
+
+router.get('/g/:code', (req, res) => {
+  const code = req.params.code
+  Link.findOne({
+    where: { code: code },
+  }).then((link) => {
+    // return res.send(link)
+    return res.redirect(link.address)
   })
 })
 

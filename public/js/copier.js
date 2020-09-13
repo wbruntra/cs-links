@@ -1,10 +1,14 @@
-const copyButton = document.getElementById('copyButton')
+const elements = ['copy-button', 'copy-button-2']
 
-document.getElementById('copyButton').addEventListener('click', function() {
-  copyToClipboard(document.getElementById('copyTarget'))
+elements.forEach((el) => {
+  document.getElementById(el).addEventListener('click', function () {
+    copyToClipboard(document.getElementById(`${el}-target`), el)
+  })
 })
 
-function copyToClipboard(elem) {
+function copyToClipboard(elem, buttonName) {
+  const copyButton = document.getElementById(buttonName)
+
   // create hidden text element, if it doesn't already exist
   var targetId = '_hiddenCopyText_'
   var isInput = (false && elem.tagName === 'INPUT') || elem.tagName === 'TEXTAREA'
