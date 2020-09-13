@@ -23,9 +23,13 @@ router.post('/link', (req, res) => {
 })
 
 router.get('/k/:code', (req, res) => {
+  var host = req.get('host')
+  var protocol = req.protocol
+  const base = `${protocol}://${host}`
+
   const code = req.params.code
-  const pagelink = `${process.env.BASE}/k/${code}`
-  const directlink = `${process.env.BASE}/g/${code}`
+  const pagelink = `${base}/k/${code}`
+  const directlink = `${base}/g/${code}`
   Link.findOne({
     where: { code: code },
   }).then((link) => {
@@ -41,7 +45,6 @@ router.get('/g/:code', (req, res) => {
   Link.findOne({
     where: { code: code },
   }).then((link) => {
-    // return res.send(link)
     return res.redirect(link.address)
   })
 })
