@@ -8,7 +8,7 @@ Link.init(
       primaryKey: true,
       type: DataTypes.STRING,
     },
-    address: DataTypes.STRING,
+    address: DataTypes.TEXT,
   },
   { sequelize, modelName: 'link' },
 )
