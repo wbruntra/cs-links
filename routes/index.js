@@ -3,7 +3,8 @@ var router = express.Router()
 var randomstring = require('randomstring')
 
 var Link = require('../models/Link')
-// var sequelize = require('sequelize')
+
+const URL_BASE = process.env.URL_BASE || 'http://localhost:3000'
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
@@ -23,13 +24,9 @@ router.post('/link', (req, res) => {
 })
 
 router.get('/k/:code', (req, res) => {
-  var host = req.get('host')
-  var protocol = req.protocol
-  const base = `${protocol}://${host}`
-
   const code = req.params.code
-  const pagelink = `${base}/k/${code}`
-  const directlink = `${base}/g/${code}`
+  const pagelink = `${URL_BASE}/k/${code}`
+  const directlink = `${URL_BASE}/g/${code}`
   Link.findOne({
     where: { code: code },
   }).then((link) => {
