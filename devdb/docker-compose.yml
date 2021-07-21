@@ -1,8 +1,8 @@
 version: "3.7"
 
 services:
-  db:
-    image: mariadb:10
+  cs_links_db:
+    image: mariadb:10.6.3-focal
     environment:
       MYSQL_ROOT_PASSWORD: devpw
       MYSQL_DATABASE: cslinks

@@ -4,18 +4,28 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "dev": "nodemon ./bin/www"
+    "dev": "nodemon ./bin/www",
+    "test": "NODE_ENV=testing node tester.js",
+    "mocha": "NODE_ENV=testing mocha --exit"
   },
   "dependencies": {
+    "axios": "^0.21.1",
     "debug": "~4.1.1",
     "dotenv": "^8.2.0",
     "ejs": "~3.1.5",
     "express": "~4.17.1",
     "http-errors": "~1.8.0",
+    "knex": "^0.95.4",
+    "knex-cli": "^1.0.2",
     "mariadb": "^2.4.2",
+    "mocha": "^9.0.2",
     "morgan": "~1.10.0",
-    "nodemon": "^2.0.4",
-    "randomstring": "^1.1.5",
-    "sequelize": "^6.3.5"
+    "mysql2": "^2.2.5",
+    "randomstring": "^1.1.5"
+  },
+  "devDependencies": {
+    "chai": "^4.3.4",
+    "chai-http": "^4.3.0",
+    "nodemon": "^2.0.12"
   }
 }
