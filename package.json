@@ -16,7 +16,6 @@
     "express": "~4.17.1",
     "http-errors": "~1.8.0",
     "knex": "^0.95.4",
-    "knex-cli": "^1.0.2",
     "mariadb": "^2.4.2",
     "morgan": "~1.10.0",
     "mysql2": "^2.2.5",
