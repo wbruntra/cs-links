@@ -88,10 +88,11 @@ describe('routes', () => {
           .get(`/g/${link.code}`)
           .redirects(0)
           .then((res) => {
+            expect(res).to.redirectTo(link.address)
             // console.log("Got res")
-            const site = res.text.split(' ').slice(-1)
+            // const site = res.text.split(' ').slice(-1)
             // console.log(site[0])
-            expect(site[0]).to.equal(link.address)
+            // expect(site[0]).to.equal(link.address)
             done()
           })
           .catch((err) => {
