@@ -1,12 +1,11 @@
 require('dotenv').config()
-var createError = require('http-errors')
-var express = require('express')
-var path = require('path')
-var logger = require('morgan')
-var helmet = require('helmet')
-var rateLimit = require('express-rate-limit')
+const createError = require('http-errors')
+const express = require('express')
+const logger = require('morgan')
+const helmet = require('helmet')
+const rateLimit = require('express-rate-limit')
 
-var app = express()
+const app = express()
 
 // Security middleware
 app.use(helmet())
@@ -32,24 +31,20 @@ app.use(limiter)
 app.use('/cli', createLinkLimiter)
 app.use('/link', createLinkLimiter)
 
-var indexRouter = require('./routes/index')
+const indexRouter = require('./routes/index')
 const { logSuspiciousActivity } = require('./routes/monitoring')
 
 // Suspicious activity logging
 app.use(logSuspiciousActivity)
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'))
-app.set('view engine', 'ejs')
-
 if (process.env.NODE_ENV !== 'testing') {
   app.use(logger('dev'))
 }
+
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-app.use(express.static(path.join(__dirname, 'public')))
 
-app.use('/', indexRouter)
+app.use('/api', indexRouter)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -64,7 +59,7 @@ app.use(function (err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500)
-  res.render('error')
+  res.send({ error: 'error' })
 })
 
 module.exports = app
