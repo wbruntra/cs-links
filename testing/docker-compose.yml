@@ -1,0 +1,22 @@
+version: "3.7"
+
+services:
+  cs_links_db:
+    image: mariadb:11.8-ubi9
+    environment:
+      MYSQL_ROOT_PASSWORD: devpw
+      MYSQL_DATABASE: cslinks_test
+    volumes:
+      - cs-links-db-testing:/var/lib/mysql
+    ports:
+      - "3408:3306"
+  # cs_links_app:
+  #   build:
+  #     dockerfile: Dockerfile.testing
+  #     context: /home/william/workspace/node/cs-linker
+  #   ports:
+  #     - "3401:3000"
+           
+volumes:
+  cs-links-db-testing:
+    driver: local

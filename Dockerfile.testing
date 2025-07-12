@@ -1,0 +1,16 @@
+
+FROM node:14-alpine
+
+LABEL author="William Bruntrager"
+
+WORKDIR /usr/src/app
+
+COPY package*.json ./
+
+RUN npm install --only=production
+
+COPY . .
+COPY .env.docker .env
+
+EXPOSE 3000
+CMD ["npm", "start"]
