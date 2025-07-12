@@ -39,6 +39,11 @@ p {
   background: rgb(66, 184, 221); /* this is a light blue */
 }
 
+.button-error {
+  color: white;
+  background: rgb(202, 60, 60); /* this is a red */
+}
+
 a {
   color: #00b7ff;
 }

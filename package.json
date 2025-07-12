@@ -9,8 +9,17 @@
     "start": "node ./bin/www",
     "dev:db": "cd devdb && docker-compose up",
     "dev": "nodemon ./bin/www",
+    "dev:client": "cd client-vite && npm run dev",
     "test": "NODE_ENV=testing node tester.js",
-    "mocha": "NODE_ENV=testing mocha --exit"
+    "mocha": "NODE_ENV=testing mocha --exit",
+    "test:e2e": "playwright test",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:debug": "playwright test --debug",
+    "test:e2e:report": "playwright show-report",
+    "test:all": "npm run test && npm run test:e2e",
+    "migrate": "node_modules/.bin/knex migrate:latest",
+    "migrate:rollback": "node_modules/.bin/knex migrate:rollback"
   },
   "dependencies": {
     "axios": "^0.21.1",
@@ -18,17 +27,24 @@
     "dotenv": "^8.2.0",
     "ejs": "~3.1.5",
     "express": "~4.17.1",
+    "express-rate-limit": "^7.5.1",
+    "express-validator": "^7.2.1",
+    "helmet": "^8.1.0",
     "http-errors": "~1.8.0",
     "knex": "^0.95.4",
     "mariadb": "^2.4.2",
     "morgan": "~1.10.0",
     "mysql2": "^2.2.5",
-    "randomstring": "^1.1.5"
+    "randomstring": "^1.1.5",
+    "url-parse": "^1.5.10",
+    "validator": "^13.15.15"
   },
   "devDependencies": {
+    "@playwright/test": "^1.54.1",
     "chai": "^4.3.4",
     "chai-http": "^4.3.0",
     "mocha": "^9.0.2",
-    "nodemon": "^2.0.12"
+    "nodemon": "^2.0.12",
+    "playwright": "^1.54.1"
   }
 }

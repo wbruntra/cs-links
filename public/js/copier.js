@@ -6,57 +6,88 @@ elements.forEach((el) => {
   })
 })
 
-function copyToClipboard(elem, buttonName) {
+async function copyToClipboard(elem, buttonName) {
   const copyButton = document.getElementById(buttonName)
-
-  // create hidden text element, if it doesn't already exist
-  var targetId = '_hiddenCopyText_'
-  var isInput = (false && elem.tagName === 'INPUT') || elem.tagName === 'TEXTAREA'
-  var origSelectionStart, origSelectionEnd
-  if (isInput) {
-    // can just use the original source element for the selection and copy
-    target = elem
-    origSelectionStart = elem.selectionStart
-    origSelectionEnd = elem.selectionEnd
-  } else {
-    // must use a temporary form element for the selection and copy
-    target = document.getElementById(targetId)
-    if (!target) {
-      var target = document.createElement('textarea')
-      target.style.position = 'absolute'
-      target.style.left = '-9999px'
-      target.style.top = '0'
-      target.id = targetId
-      document.body.appendChild(target)
+  const textToCopy = elem.value || elem.textContent
+  
+  try {
+    // Try modern Clipboard API first
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(textToCopy)
+      showCopySuccess(copyButton)
+      return true
+    } else {
+      // Fallback to older method for non-secure contexts
+      return fallbackCopyToClipboard(textToCopy, copyButton)
     }
-    target.textContent = elem.value
+  } catch (error) {
+    console.error('Copy failed:', error)
+    // Try fallback method
+    return fallbackCopyToClipboard(textToCopy, copyButton)
   }
-  // select the content
-  var currentFocus = document.activeElement
-  target.focus()
-  target.setSelectionRange(0, target.value.length)
+}
 
-  // copy the selection
-  var succeed
+function fallbackCopyToClipboard(text, copyButton) {
+  // Create a temporary textarea element
+  const textarea = document.createElement('textarea')
+  textarea.value = text
+  textarea.style.position = 'absolute'
+  textarea.style.left = '-9999px'
+  textarea.style.top = '0'
+  document.body.appendChild(textarea)
+  
+  // Select and copy the text
+  const currentFocus = document.activeElement
+  textarea.focus()
+  textarea.select()
+  
+  let succeed = false
   try {
     succeed = document.execCommand('copy')
   } catch (e) {
+    console.error('Fallback copy failed:', e)
     succeed = false
   }
-  // restore original focus
+  
+  // Clean up
+  document.body.removeChild(textarea)
+  
+  // Restore focus
   if (currentFocus && typeof currentFocus.focus === 'function') {
     currentFocus.focus()
   }
-
-  if (isInput) {
-    // restore prior selection
-    elem.setSelectionRange(origSelectionStart, origSelectionEnd)
+  
+  if (succeed) {
+    showCopySuccess(copyButton)
   } else {
-    // clear temporary content
-    target.textContent = ''
+    showCopyError(copyButton)
   }
+  
+  return succeed
+}
+
+function showCopySuccess(copyButton) {
   copyButton.classList.remove('button-secondary')
   copyButton.classList.add('button-success')
-  copyButton.innerText = 'Copied!'
-  return succeed
+  copyButton.textContent = 'Copied!'
+  
+  // Reset button after 2 seconds
+  setTimeout(() => {
+    copyButton.classList.remove('button-success')
+    copyButton.classList.add('button-secondary')
+    copyButton.textContent = 'Share Link'
+  }, 2000)
+}
+
+function showCopyError(copyButton) {
+  copyButton.classList.remove('button-secondary')
+  copyButton.classList.add('button-error')
+  copyButton.textContent = 'Copy Failed'
+  
+  // Reset button after 2 seconds
+  setTimeout(() => {
+    copyButton.classList.remove('button-error')
+    copyButton.classList.add('button-secondary')
+    copyButton.textContent = 'Share Link'
+  }, 2000)
 }

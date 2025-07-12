@@ -1,8 +1,7 @@
-version: "3.7"
-
+name: cs-linker
 services:
   cs_links_db:
-    image: mariadb:10.6.3-focal
+    image: mariadb:11.8-ubi9
     environment:
       MYSQL_ROOT_PASSWORD: devpw
       MYSQL_DATABASE: cslinks
