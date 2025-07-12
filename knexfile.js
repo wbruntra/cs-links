@@ -33,7 +33,7 @@ module.exports = {
     migrations: {
       tableName: 'knex_migrations',
     },
-  },  
+  },
   development: {
     client: 'mysql2',
     connection: {
@@ -57,6 +57,8 @@ module.exports = {
       database: process.env.DB_NAME,
       user: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
+      host: process.env.DB_HOST || '127.0.0.1',
+      port: process.env.DB_PORT || '3306',
     },
     pool: {
       min: 2,
