@@ -44,6 +44,11 @@ async function copyToClipboard(text, buttonType) {
         showCopyError(buttonType)
       }
     }
+    
+    // Add haptic feedback on mobile
+    if (navigator.vibrate) {
+      navigator.vibrate(50)
+    }
   } catch (error) {
     console.error('Copy failed:', error)
     showCopyError(buttonType)
@@ -84,76 +89,138 @@ function createAnotherLink() {
 </script>
 
 <template>
-  <div>
-    <h1>Link Created!</h1>
-    
-    <div class="link-section">
-      <p>Here is your original link:</p>
-      <p>
-        <a :href="originalUrl" target="_blank" rel="noopener noreferrer">{{ originalUrl }}</a>
-      </p>
-      <p>
-        <a :href="originalUrl" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
-          Go to Original Link
-        </a>
-      </p>
-    </div>
+  <div class="row justify-content-center">
+    <div class="col-md-10 col-lg-8">
+      <div class="card fade-in-up">
+        <div class="card-body">
+          <!-- Success Header -->
+          <div class="text-center mb-4">
+            <div class="success-icon mb-3">
+              <i class="bi bi-check-circle-fill" style="font-size: 4rem; color: #28a745;"></i>
+            </div>
+            <h1 class="card-title text-success mb-2" style="font-weight: 700;">
+              Link Created Successfully!
+            </h1>
+            <p class="text-muted">Your shortened link is ready to share</p>
+          </div>
+          
+          <!-- Original URL Section -->
+          <div class="glass-effect p-4 rounded mb-4">
+            <div class="d-flex align-items-center mb-3">
+              <i class="bi bi-globe2 me-2 text-primary" style="font-size: 1.2rem;"></i>
+              <h5 class="mb-0 text-primary">Original URL</h5>
+            </div>
+            <p class="mb-3 text-break">
+              <a :href="originalUrl" target="_blank" rel="noopener noreferrer" class="text-decoration-none fw-medium">
+                {{ originalUrl }}
+              </a>
+            </p>
+            <a :href="originalUrl" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm">
+              <i class="bi bi-box-arrow-up-right me-1"></i>
+              Visit Original Link
+            </a>
+          </div>
 
-    <hr style="margin: 30px 0;">
+          <!-- Share Link Section -->
+          <div class="mb-4">
+            <div class="d-flex align-items-center mb-3">
+              <i class="bi bi-share me-2" style="color: #667eea; font-size: 1.2rem;"></i>
+              <h5 class="mb-0" style="color: #667eea;">Share Link</h5>
+              <span class="badge bg-light text-dark ms-2">With Preview</span>
+            </div>
+            <p class="text-muted small mb-3">
+              <i class="bi bi-info-circle me-1"></i>
+              Recipients will see a preview page before being redirected
+            </p>
+            <div class="input-group shadow-sm">
+              <input 
+                type="text" 
+                :value="pageLink" 
+                readonly 
+                class="form-control bg-light"
+                style="font-family: 'Courier New', monospace;"
+              />
+              <button 
+                @click="copyToClipboard(pageLink, 'page')"
+                :class="[
+                  'btn btn-copy',
+                  copyPageStatus === 'Copied!' ? 'btn-success' : 
+                  copyPageStatus === 'Copy Failed' ? 'btn-danger' : 'btn-outline-secondary'
+                ]"
+                type="button"
+              >
+                <i v-if="copyPageStatus === 'Copied!'" class="bi bi-check2 me-1"></i>
+                <i v-else-if="copyPageStatus === 'Copy Failed'" class="bi bi-x-lg me-1"></i>
+                <i v-else class="bi bi-clipboard me-1"></i>
+                {{ copyPageStatus }}
+              </button>
+            </div>
+          </div>
 
-    <div class="copy-section">
-      <p><strong>Copy link for sharing:</strong></p>
-      <p>This link shows this page first, then redirects to your URL.</p>
-      <div style="display: flex; gap: 10px; align-items: center; margin-top: 10px;">
-        <input 
-          type="text" 
-          :value="pageLink" 
-          readonly 
-          style="flex: 1; background-color: #f8f9fa;"
-        />
-        <button 
-          @click="copyToClipboard(pageLink, 'page')"
-          :class="[
-            'btn',
-            copyPageStatus === 'Copied!' ? 'btn-success' : 
-            copyPageStatus === 'Copy Failed' ? 'btn-error' : 'btn-secondary'
-          ]"
-        >
-          {{ copyPageStatus }}
-        </button>
+          <!-- Direct Link Section -->
+          <div class="mb-4">
+            <div class="d-flex align-items-center mb-3">
+              <i class="bi bi-lightning-charge me-2" style="color: #f093fb; font-size: 1.2rem;"></i>
+              <h5 class="mb-0" style="color: #f093fb;">Direct Link</h5>
+              <span class="badge bg-light text-dark ms-2">Instant Redirect</span>
+            </div>
+            <p class="text-muted small mb-3">
+              <i class="bi bi-info-circle me-1"></i>
+              Goes directly to your URL without any preview page
+            </p>
+            <div class="input-group shadow-sm">
+              <input 
+                type="text" 
+                :value="directLink" 
+                readonly 
+                class="form-control bg-light"
+                style="font-family: 'Courier New', monospace;"
+              />
+              <button 
+                @click="copyToClipboard(directLink, 'direct')"
+                :class="[
+                  'btn btn-copy',
+                  copyDirectStatus === 'Copied!' ? 'btn-success' : 
+                  copyDirectStatus === 'Copy Failed' ? 'btn-danger' : 'btn-outline-secondary'
+                ]"
+                type="button"
+              >
+                <i v-if="copyDirectStatus === 'Copied!'" class="bi bi-check2 me-1"></i>
+                <i v-else-if="copyDirectStatus === 'Copy Failed'" class="bi bi-x-lg me-1"></i>
+                <i v-else class="bi bi-clipboard me-1"></i>
+                {{ copyDirectStatus }}
+              </button>
+            </div>
+          </div>
+
+          <!-- Quick Actions -->
+          <div class="glass-effect p-4 rounded">
+            <div class="row g-3">
+              <div class="col-sm-6">
+                <button @click="createAnotherLink" class="btn btn-primary w-100">
+                  <i class="bi bi-plus-circle me-2"></i>
+                  Create Another Link
+                </button>
+              </div>
+              <div class="col-sm-6">
+                <button class="btn btn-outline-secondary w-100" @click="copyToClipboard(pageLink, 'page')">
+                  <i class="bi bi-share me-2"></i>
+                  Quick Share
+                </button>
+              </div>
+            </div>
+            
+            <div class="text-center mt-3 pt-3 border-top">
+              <small class="text-muted">
+                <i class="bi bi-clock me-1"></i>
+                Links never expire • 
+                <i class="bi bi-graph-up ms-2 me-1"></i>
+                Track clicks and analytics
+              </small>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-
-    <div class="copy-section">
-      <p><strong>Copy direct link:</strong></p>
-      <p>This link goes directly to your URL without showing this page.</p>
-      <div style="display: flex; gap: 10px; align-items: center; margin-top: 10px;">
-        <input 
-          type="text" 
-          :value="directLink" 
-          readonly 
-          style="flex: 1; background-color: #f8f9fa;"
-        />
-        <button 
-          @click="copyToClipboard(directLink, 'direct')"
-          :class="[
-            'btn',
-            copyDirectStatus === 'Copied!' ? 'btn-success' : 
-            copyDirectStatus === 'Copy Failed' ? 'btn-error' : 'btn-secondary'
-          ]"
-        >
-          {{ copyDirectStatus }}
-        </button>
-      </div>
-    </div>
-
-    <hr style="margin: 30px 0;">
-
-    <div>
-      <p><strong>Create another link:</strong></p>
-      <button @click="createAnotherLink" class="btn btn-primary">
-        Create Another Link
-      </button>
     </div>
   </div>
 </template>

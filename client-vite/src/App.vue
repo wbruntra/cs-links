@@ -4,121 +4,96 @@ import { RouterView } from 'vue-router'
 
 <template>
   <div id="app">
-    <RouterView />
+    <nav class="navbar navbar-expand-lg navbar-dark mb-5">
+      <div class="container">
+        <router-link to="/" class="navbar-brand d-flex align-items-center">
+          <div class="brand-icon me-2">
+            <i class="bi bi-scissors"></i>
+          </div>
+          <span>CS Linker</span>
+        </router-link>
+        
+        <div class="navbar-nav ms-auto">
+          <span class="navbar-text small">
+            <i class="bi bi-shield-check me-1"></i>
+            Secure • Fast • Reliable
+          </span>
+        </div>
+      </div>
+    </nav>
+    
+    <div class="container-fluid px-3">
+      <RouterView />
+    </div>
+    
+    <!-- Floating background elements for visual interest -->
+    <div class="floating-elements">
+      <div class="floating-circle" style="top: 10%; left: 10%; animation-delay: 0s;"></div>
+      <div class="floating-circle" style="top: 20%; right: 15%; animation-delay: 2s;"></div>
+      <div class="floating-circle" style="bottom: 15%; left: 20%; animation-delay: 4s;"></div>
+      <div class="floating-circle" style="bottom: 25%; right: 10%; animation-delay: 6s;"></div>
+    </div>
   </div>
 </template>
 
-<style>
-/* Global styles */
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  margin: 0;
-  padding: 20px;
-  background-color: #f5f5f5;
+<style scoped>
+.brand-icon {
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  transition: var(--transition);
 }
 
-#app {
-  max-width: 800px;
-  margin: 0 auto;
-  background: white;
-  padding: 40px;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+.navbar-brand:hover .brand-icon {
+  background: rgba(255, 255, 255, 0.3);
+  transform: rotate(180deg);
 }
 
-h1 {
-  color: #333;
-  text-align: center;
-  margin-bottom: 30px;
-}
-
-.form-container {
-  margin-bottom: 30px;
-}
-
-.form-group {
-  margin-bottom: 20px;
-}
-
-input[type="text"] {
+.floating-elements {
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
-  padding: 12px 16px;
-  border: 2px solid #ddd;
-  border-radius: 4px;
-  font-size: 16px;
-  box-sizing: border-box;
+  height: 100%;
+  pointer-events: none;
+  z-index: -1;
+  overflow: hidden;
 }
 
-input[type="text"]:focus {
-  outline: none;
-  border-color: #007bff;
+.floating-circle {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  border-radius: 50%;
+  animation: float 8s ease-in-out infinite;
 }
 
-.btn {
-  padding: 12px 24px;
-  border: none;
-  border-radius: 4px;
-  font-size: 16px;
-  cursor: pointer;
-  text-decoration: none;
-  display: inline-block;
-  text-align: center;
-  transition: background-color 0.2s;
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translateY(-20px) rotate(180deg);
+    opacity: 0.8;
+  }
 }
 
-.btn-primary {
-  background-color: #007bff;
-  color: white;
-}
-
-.btn-primary:hover {
-  background-color: #0056b3;
-}
-
-.btn-secondary {
-  background-color: #6c757d;
-  color: white;
-}
-
-.btn-secondary:hover {
-  background-color: #545b62;
-}
-
-.btn-success {
-  background-color: #28a745;
-  color: white;
-}
-
-.btn-error {
-  background-color: #dc3545;
-  color: white;
-}
-
-.error {
-  color: #dc3545;
-  margin-top: 10px;
-}
-
-.success {
-  color: #28a745;
-  margin-top: 10px;
-}
-
-.link-section {
-  margin: 30px 0;
-  padding: 20px;
-  background-color: #f8f9fa;
-  border-radius: 4px;
-}
-
-.copy-section {
-  margin: 20px 0;
-  padding: 15px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
-
-.hidden {
-  display: none;
+@media (max-width: 768px) {
+  .navbar-text {
+    display: none;
+  }
+  
+  .floating-circle {
+    width: 40px;
+    height: 40px;
+  }
 }
 </style>
+
