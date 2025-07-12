@@ -25,7 +25,17 @@ const SUSPICIOUS_PATTERNS = [
   /onload/i,
   /eval\(/i,
   /\\x/i, // hex encoded
-  /%[0-9a-f]{2}/i, // url encoded suspicious chars
+  // More specific URL-encoded suspicious patterns instead of all %XX
+  /%3[cC]/i, // %3C = <
+  /%3[eE]/i, // %3E = >
+  /%22/i,    // %22 = "
+  /%27/i,    // %27 = '
+  /%28/i,    // %28 = (
+  /%29/i,    // %29 = )
+  /%3[bB]/i, // %3B = ;
+  /%00/i,    // null byte
+  /%0[aA]/i, // %0A = newline
+  /%0[dD]/i, // %0D = carriage return
 ]
 
 /**
