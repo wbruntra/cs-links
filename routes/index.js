@@ -13,16 +13,16 @@ router.get('/', function (req, res, next) {
 
 router.post('/cli', createLinkWithKnex, (req, res) => {
   return res.send({
-    direct_link: `${URL_BASE}/g/${req.code}`,
-    page_link: `${URL_BASE}/k/${req.code}`,
+    direct_link: `${URL_BASE}/g/${res.locals.code}`,
+    page_link: `${URL_BASE}/k/${res.locals.code}`,
   })
 })
 
 router.post('/link', createLinkWithKnex, (req, res) => {
   return res.json({
-    direct_link: `${URL_BASE}/g/${req.code}`,
-    page_link: `${URL_BASE}/k/${req.code}`,
-    code: req.code
+    direct_link: `${URL_BASE}/g/${res.locals.code}`,
+    page_link: `${URL_BASE}/k/${res.locals.code}`,
+    code: res.locals.code
   })
 })
 

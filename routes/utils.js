@@ -31,7 +31,7 @@ const createLinkWithKnex = async (req, res, next) => {
     })
     
     if (existingLink) {
-      req.code = existingLink.code
+      res.locals.code = existingLink.code
       return next()
     }
 
@@ -57,7 +57,7 @@ const createLinkWithKnex = async (req, res, next) => {
       address,
     })
     
-    req.code = code
+    res.locals.code = code
     next()
 
   } catch (e) {
