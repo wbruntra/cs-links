@@ -7,8 +7,10 @@ const { createLinkWithKnex } = require('./utils')
 
 // Helper function to get the base URL from the request
 function getBaseUrl(req) {
-  const protocol = req.protocol || 'https'
-  const host = req.get('host') || 'localhost:13001'
+  // Check for X-Forwarded-Proto header (set by nginx proxy)
+  const protocol = req.get('X-Forwarded-Proto') || req.protocol || 'https'
+  // Check for X-Forwarded-Host header (set by nginx proxy) first, then X-Original-Host, then Host
+  const host = req.get('X-Forwarded-Host') || req.get('X-Original-Host') || req.get('host') || 'localhost:13001'
   return `${protocol}://${host}`
 }
 
