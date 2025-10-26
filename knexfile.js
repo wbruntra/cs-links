@@ -1,18 +1,12 @@
-require('dotenv').config()
+const path = require('path')
 
 module.exports = {
   testing: {
-    client: 'mysql2',
+    client: 'sqlite3',
     connection: {
-      database: 'cslinks_test',
-      user: 'root',
-      password: 'devpw',
-      port: '3408',
+      filename: path.join(__dirname, 'cslinks-test.sqlite3'),
     },
-    pool: {
-      min: 2,
-      max: 10,
-    },
+    useNullAsDefault: true,
     migrations: {
       tableName: 'knex_migrations',
     },
@@ -35,34 +29,17 @@ module.exports = {
     },
   },
   development: {
-    client: 'mysql2',
+    client: 'sqlite3',
     connection: {
-      database: 'cslinks',
-      user: 'root',
-      password: 'devpw',
-      port: '3307',
+      filename: path.join(__dirname, 'cslinks-dev.sqlite3'),
     },
-    pool: {
-      min: 2,
-      max: 10,
-    },
-    migrations: {
-      tableName: 'knex_migrations',
-    },
+    useNullAsDefault: true,
   },
 
   production: {
-    client: 'mysql2',
+    client: 'sqlite3',
     connection: {
-      database: process.env.DB_NAME,
-      user: process.env.DB_USER,
-      password: process.env.DB_PASSWORD,
-      host: process.env.DB_HOST || '127.0.0.1',
-      port: process.env.DB_PORT || '3306',
-    },
-    pool: {
-      min: 2,
-      max: 10,
+      filename: path.join(__dirname, 'cslinks-prod.sqlite3'),
     },
     migrations: {
       tableName: 'knex_migrations',

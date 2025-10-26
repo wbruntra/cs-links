@@ -3,6 +3,8 @@ module.exports = {
     {
       name: 'cs-linker',
       script: './bin/www',
+      interpreter: 'bun',
+      
       instances: 1,
       exec_mode: 'fork',
 
