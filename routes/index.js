@@ -5,13 +5,19 @@ const db = require('../db')
 
 const { createLinkWithKnex } = require('./utils')
 
-const URL_BASE = process.env.URL_BASE || 'http://localhost:13001'
+// Helper function to get the base URL from the request
+function getBaseUrl(req) {
+  const protocol = req.protocol || 'https'
+  const host = req.get('host') || 'localhost:13001'
+  return `${protocol}://${host}`
+}
 
 router.get('/', function (req, res, next) {
   res.json({ message: 'CS-Linker API', version: '1.0.0' })
 })
 
 router.post('/cli', createLinkWithKnex, (req, res) => {
+  const URL_BASE = getBaseUrl(req)
   return res.send({
     direct_link: `${URL_BASE}/g/${res.locals.code}`,
     page_link: `${URL_BASE}/k/${res.locals.code}`,
@@ -19,6 +25,7 @@ router.post('/cli', createLinkWithKnex, (req, res) => {
 })
 
 router.post('/link', createLinkWithKnex, (req, res) => {
+  const URL_BASE = getBaseUrl(req)
   return res.json({
     direct_link: `${URL_BASE}/g/${res.locals.code}`,
     page_link: `${URL_BASE}/k/${res.locals.code}`,
@@ -35,6 +42,7 @@ router.get('/k/:code', async (req, res) => {
       return res.status(400).json({ error: 'Invalid link code' })
     }
     
+    const URL_BASE = getBaseUrl(req)
     const pagelink = `${URL_BASE}/k/${code}`
     const directlink = `${URL_BASE}/g/${code}`
 
