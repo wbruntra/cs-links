@@ -1,10 +1,13 @@
-require('dotenv').config()
 const knexfile = require('./knexfile')
-console.log(`NODE_ENV = ${process.env.NODE_ENV}`)
-const config = knexfile[process.env.NODE_ENV]
+const NODE_ENV = process.env.NODE_ENV || 'development'
 
-console.log(`Using knex config: ${JSON.stringify(config, null, 2)}`)
+const config = knexfile[NODE_ENV]
+console.log(`Using database configuration for: ${NODE_ENV}`)
 
-const knex = require('knex')(config)
+const knex = require('knex')({
+  ...config,
+  client: require('knex-bun-sqlite'),
+  useNullAsDefault: true,
+})
 
 module.exports = knex
