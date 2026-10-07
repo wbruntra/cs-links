@@ -7,7 +7,7 @@
   hosts: cs_linker
   vars_files: [vars.yml]
   environment:
-    PATH: "{{ node_bin_dir }}:/usr/local/bin:/usr/bin:/bin"
+    PATH: "{{ node_bin_dir }}:/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin"
 
   tasks:
     # ---------- preflight ----------
