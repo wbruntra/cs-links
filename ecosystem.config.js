@@ -1,57 +1,35 @@
+// pm2 process config. Managed by the ansible playbook (ansible/playbook.yml):
+//   pm2 startOrReload ecosystem.config.js --update-env
+// Day-to-day on the server:  pm2 status | pm2 logs cs-linker | pm2 restart cs-linker
 module.exports = {
   apps: [
     {
       name: 'cs-linker',
       script: './bin/www',
+      cwd: __dirname,
       interpreter: 'bun',
-      
+
       instances: 1,
       exec_mode: 'fork',
 
-      // Environment
       env: {
         NODE_ENV: 'production',
-        PORT: 5005,
+        PORT: 5005, // nginx proxies /api and /g to this port
       },
 
-      // Resource limits for low resource usage
-      max_memory_restart: '128M',
-
-      // Restart settings
+      // Restart behaviour
       autorestart: true,
       watch: false,
+      max_memory_restart: '128M',
       max_restarts: 10,
       min_uptime: '10s',
+      kill_timeout: 5000,
 
       // Logging
-      log_file: './logs/combined.log',
       out_file: './logs/out.log',
       error_file: './logs/error.log',
       log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
-
-      // Performance optimizations for low resource usage
-      node_args: ['--max-old-space-size=128', '--optimize-for-size'],
-
-      // Process management
-      kill_timeout: 5000,
-      listen_timeout: 3000,
-
-      // Health monitoring
-      health_check_grace_period: 3000,
-
-      // Disable clustering to save resources
       merge_logs: true,
-
-      // Additional settings for resource efficiency
-      ignore_watch: [
-        'node_modules',
-        'logs',
-        'test',
-        'tests',
-        'client-vite',
-        'playwright-report',
-        'test-results',
-      ],
     },
   ],
 }

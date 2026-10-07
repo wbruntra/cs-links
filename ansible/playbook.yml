@@ -1,0 +1,177 @@
+---
+# Deploys cs-linker: code from GitHub, pm2-managed backend, nginx + Let's Encrypt cert.
+#   ansible-playbook playbook.yml                 # full deploy / update
+#   CS_LINKER_SECRET=... ansible-playbook playbook.yml   # first deploy (creates .env)
+#   ansible-playbook playbook.yml --tags app      # code + backend + client only
+- name: Deploy cs-linker
+  hosts: cs_linker
+  vars_files: [vars.yml]
+  environment:
+    PATH: "{{ node_bin_dir }}:/usr/local/bin:/usr/bin:/bin"
+
+  tasks:
+    # ---------- preflight ----------
+    - name: Check node and pm2 are available
+      ansible.builtin.stat:
+        path: "{{ node_bin_dir }}/{{ item }}"
+      loop: [node, pm2]
+      register: node_tools
+      failed_when: not node_tools.stat.exists
+      changed_when: false
+      tags: [always]
+
+    # ---------- code ----------
+    - name: Fetch code from GitHub
+      ansible.builtin.git:
+        repo: "{{ repo_url }}"
+        dest: "{{ app_dir }}"
+        version: "{{ repo_branch }}"
+        accept_newhostkey: true
+      register: code
+      tags: [app]
+
+    - name: Ensure logs directory exists
+      ansible.builtin.file:
+        path: "{{ app_dir }}/logs"
+        state: directory
+        mode: "0755"
+      tags: [app]
+
+    - name: Create .env if missing (never overwritten)
+      ansible.builtin.template:
+        src: env.j2
+        dest: "{{ app_dir }}/.env"
+        mode: "0600"
+        force: false
+      tags: [app]
+
+    # ---------- backend ----------
+    - name: Install backend dependencies
+      ansible.builtin.command: bun install --production
+      args:
+        chdir: "{{ app_dir }}"
+      when: code.changed
+      changed_when: true
+      tags: [app]
+
+    - name: Run database migrations
+      ansible.builtin.command: >-
+        bun -e "require('./db').migrate.latest().then(() => process.exit(0)).catch(e => { console.error(e); process.exit(1) })"
+      args:
+        chdir: "{{ app_dir }}"
+      environment:
+        NODE_ENV: production
+      changed_when: false
+      tags: [app]
+
+    # ---------- client ----------
+    - name: Check for built client
+      ansible.builtin.stat:
+        path: "{{ app_dir }}/client-v2/dist/index.html"
+      register: client_dist
+      tags: [app]
+
+    - name: Install client dependencies
+      ansible.builtin.command: bun install --frozen-lockfile
+      args:
+        chdir: "{{ app_dir }}/client-v2"
+      when: code.changed or not client_dist.stat.exists
+      changed_when: true
+      tags: [app]
+
+    - name: Build client
+      ansible.builtin.command: bun run build
+      args:
+        chdir: "{{ app_dir }}/client-v2"
+      when: code.changed or not client_dist.stat.exists
+      changed_when: true
+      tags: [app]
+
+    # ---------- pm2 ----------
+    - name: Start or reload backend under pm2
+      ansible.builtin.command: pm2 startOrReload ecosystem.config.js --update-env
+      args:
+        chdir: "{{ app_dir }}"
+      environment:
+        PORT: "{{ app_port }}"
+      changed_when: true
+      tags: [app]
+
+    - name: Save pm2 process list (restored on boot by pm2-william.service)
+      ansible.builtin.command: pm2 save
+      changed_when: false
+      tags: [app]
+
+    - name: Wait for backend
+      ansible.builtin.uri:
+        url: "http://127.0.0.1:{{ app_port }}/api/"
+        status_code: [200, 301, 302, 304, 404]
+      register: backend
+      retries: 10
+      delay: 2
+      until: backend.status is defined and backend.status > 0
+      changed_when: false
+      tags: [app]
+
+    # ---------- nginx + certificate ----------
+    - name: Check for existing certificate
+      ansible.builtin.stat:
+        path: "/etc/letsencrypt/live/{{ domain }}/fullchain.pem"
+      become: true
+      register: cert
+      tags: [nginx]
+
+    - name: Install HTTP-only nginx site (needed to obtain the certificate)
+      ansible.builtin.template:
+        src: links.nginx.conf.j2
+        dest: "{{ nginx_site_file }}"
+        mode: "0644"
+      vars:
+        cs_ssl: false
+      when: not cert.stat.exists
+      register: bootstrap_site
+      tags: [nginx]
+
+    - name: Reload nginx for HTTP-only site
+      ansible.builtin.command: "{{ item }}"
+      loop:
+        - nginx -t
+        - systemctl reload nginx
+      become: true
+      when: bootstrap_site is changed
+      tags: [nginx]
+
+    - name: Obtain certificate with certbot
+      ansible.builtin.command: >-
+        certbot certonly --nginx --non-interactive --agree-tos
+        -m {{ certbot_email }} -d {{ domain }}
+      become: true
+      when: not cert.stat.exists
+      tags: [nginx]
+
+    - name: Install HTTPS nginx site
+      ansible.builtin.template:
+        src: links.nginx.conf.j2
+        dest: "{{ nginx_site_file }}"
+        mode: "0644"
+      vars:
+        cs_ssl: true
+      register: ssl_site
+      tags: [nginx]
+
+    - name: Test and reload nginx
+      ansible.builtin.command: "{{ item }}"
+      loop:
+        - nginx -t
+        - systemctl reload nginx
+      become: true
+      when: ssl_site is changed
+      tags: [nginx]
+
+    # ---------- verify ----------
+    - name: Check site over HTTPS
+      ansible.builtin.uri:
+        url: "https://{{ domain }}/"
+      delegate_to: localhost
+      changed_when: false
+      tags: [always]

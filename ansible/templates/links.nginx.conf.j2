@@ -1,20 +1,29 @@
+# Managed by ansible (cs-linker). Included by /etc/nginx/nginx.conf via ~/nginx/sites/*
+{% if cs_ssl %}
 server {
   listen 80;
-  server_name cs.bruntrager.win links.bruntrager.win;
+  server_name {{ domain }};
 
   return 301 https://$host$request_uri;
 }
 
 server {
   listen 443 ssl;
-  server_name cs.bruntrager.win links.bruntrager.win;
+  server_name {{ domain }};
 
-  include /home/william/config/nginx/certs/bruntrager.conf;
+  ssl_certificate /etc/letsencrypt/live/{{ domain }}/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/{{ domain }}/privkey.pem;
+{% else %}
+# HTTP-only bootstrap, used until the certificate has been issued
+server {
+  listen 80;
+  server_name {{ domain }};
+{% endif %}
 
-  root /home/william/web/cs-links/client-v2/dist;
+  root {{ app_dir }}/client-v2/dist;
 
   location /api {
-    proxy_pass http://localhost:5005;
+    proxy_pass http://127.0.0.1:{{ app_port }};
     proxy_set_header X-Forwarded-For $remote_addr;
     proxy_set_header X-Forwarded-Proto $scheme;
     proxy_set_header X-Forwarded-Host $server_name;
@@ -23,7 +32,7 @@ server {
 
   location /g {
     rewrite ^/g/(.*)$ /api/g/$1 break;
-    proxy_pass http://localhost:5005;
+    proxy_pass http://127.0.0.1:{{ app_port }};
     proxy_set_header X-Forwarded-For $remote_addr;
     proxy_set_header X-Forwarded-Proto $scheme;
     proxy_set_header X-Forwarded-Host $server_name;

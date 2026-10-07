@@ -1,0 +1,17 @@
+domain: links.bruntrager.win
+app_dir: /home/william/web/cs-links
+repo_url: git@github.com:wbruntra/cs-links.git
+repo_branch: master
+
+app_port: 5005
+pm2_app_name: cs-linker
+
+# nvm-managed node (provides pm2); bun is /usr/local/bin/bun
+node_bin_dir: /home/william/.nvm/versions/node/v24.12.0/bin
+
+nginx_site_file: /home/william/nginx/sites/links.conf
+certbot_email: bill.bruntrager@gmail.com
+
+# Only written on first deploy (the task never overwrites an existing .env).
+# Provide with: CS_LINKER_SECRET=... ansible-playbook playbook.yml
+cs_linker_secret: "{{ lookup('ansible.builtin.env', 'CS_LINKER_SECRET') }}"
