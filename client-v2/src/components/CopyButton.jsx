@@ -1,13 +1,23 @@
-// Copy button whose label/colour reflects the status from useCopy().
-export function CopyButton({ status, onCopy, icons = false, class: className = 'btn-copy', failClass = 'btn-danger', idleClass = 'btn-outline-secondary' }) {
-  const copied = status === 'Copied!'
-  const failed = status === 'Copy Failed'
-  const cls = copied ? 'btn-success' : failed ? failClass : idleClass
+import { Copy, Check, X } from './Icons.jsx'
 
+const VIEW = {
+  idle: { label: 'Copy', Icon: Copy, tone: 'bg-card hover:bg-ink hover:text-paper' },
+  copied: { label: 'Copied', Icon: Check, tone: 'bg-ok text-paper' },
+  failed: { label: 'Failed', Icon: X, tone: 'bg-signal' },
+}
+
+// Copy button driven by the status from useCopy().
+export function CopyButton({ status, onCopy, class: className = '' }) {
+  const { label, Icon, tone } = VIEW[status]
   return (
-    <button onClick={onCopy} class={`btn ${className} ${cls}`} type="button">
-      {icons && <i class={`bi ${copied ? 'bi-check2' : failed ? 'bi-x-lg' : 'bi-clipboard'} me-1`}></i>}
-      {status}
+    <button
+      type="button"
+      onClick={onCopy}
+      aria-live="polite"
+      class={`inline-flex min-w-28 items-center justify-center gap-2 border-2 border-ink px-4 py-3 text-sm font-semibold uppercase tracking-wider transition-colors cursor-pointer ${tone} ${className}`}
+    >
+      <Icon width={16} height={16} />
+      {label}
     </button>
   )
 }

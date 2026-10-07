@@ -2,7 +2,17 @@ import { useEffect, useState } from 'preact/hooks'
 import { useRoute } from 'preact-iso'
 import { API_BASE } from '../config.js'
 import { useCopy } from '../hooks/useCopy.js'
-import { CopyButton } from '../components/CopyButton.jsx'
+import { LinkRow } from '../components/LinkRow.jsx'
+import { CutLine } from '../components/CutLine.jsx'
+import { ArrowRight } from '../components/Icons.jsx'
+
+function hostOf(url) {
+  try {
+    return new URL(url).hostname.replace(/^www\./, '')
+  } catch {
+    return url
+  }
+}
 
 export function RedirectView() {
   const { params } = useRoute()
@@ -10,8 +20,8 @@ export function RedirectView() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
 
-  const [pageStatus, copyPage] = useCopy()
-  const [directStatus, copyDirect] = useCopy()
+  const pageCopy = useCopy()
+  const directCopy = useCopy()
 
   useEffect(() => {
     let cancelled = false
@@ -39,13 +49,17 @@ export function RedirectView() {
     }
   }, [params.code])
 
-  if (isLoading) return <h1>Loading...</h1>
+  if (isLoading) {
+    return <p class="text-sm uppercase tracking-[0.2em] text-muted">Loading…</p>
+  }
 
   if (error) {
     return (
-      <div>
-        <h1>Error</h1>
-        <p class="error">{error}</p>
+      <div class="motion-safe:animate-rise">
+        <h1 class="font-display text-[clamp(2.75rem,8vw,5.5rem)] font-semibold leading-[0.95]">{error}.</h1>
+        <a href="/" class="mt-6 inline-block underline underline-offset-4">
+          Cut a new link
+        </a>
       </div>
     )
   }
@@ -53,45 +67,33 @@ export function RedirectView() {
   const { originalUrl, pageLink, directLink } = link
 
   return (
-    <div>
-      <h1>Link</h1>
+    <div class="motion-safe:animate-rise">
+      <p class="text-sm uppercase tracking-[0.2em] text-muted">This link leads to</p>
+      <h1 class="mt-2 break-all font-display text-[clamp(2.5rem,8vw,5.5rem)] font-semibold leading-[0.95] tracking-tight">
+        {hostOf(originalUrl)}
+      </h1>
+      <p class="mt-4 break-all text-sm text-muted">{originalUrl}</p>
 
-      <div class="link-section">
-        <p>Here is the link:</p>
-        <p>
-          <a href={originalUrl} target="_blank" rel="noopener noreferrer">{originalUrl}</a>
-        </p>
-        <p>
-          <a href={originalUrl} target="_blank" rel="noopener noreferrer" class="btn btn-primary">
-            Go!
-          </a>
-        </p>
+      <a
+        href={originalUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="group mt-8 inline-flex items-center gap-3 border-2 border-ink bg-signal px-8 py-4 text-base font-semibold uppercase tracking-wider shadow-hard transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-hard-sm"
+      >
+        Go
+        <ArrowRight class="transition-transform group-hover:translate-x-1" />
+      </a>
+
+      <CutLine class="my-12" />
+
+      <div class="space-y-8">
+        <LinkRow label="Share this link" hint="Shows this preview page" value={pageLink} copyState={pageCopy} />
+        <LinkRow label="Skip this page" hint="Straight to the destination" value={directLink} copyState={directCopy} />
       </div>
 
-      <hr style="margin: 30px 0;" />
-
-      <div class="copy-section">
-        <p><strong>Copy link for sharing:</strong></p>
-        <div style="display: flex; gap: 10px; align-items: center; margin-top: 10px;">
-          <input type="text" value={pageLink} readOnly style="flex: 1; background-color: #f8f9fa;" />
-          <CopyButton idleClass="btn-secondary" failClass="btn-error" status={pageStatus} onCopy={() => copyPage(pageLink)} />
-        </div>
-      </div>
-
-      <div class="copy-section">
-        <p><strong>Copy link but skip this page:</strong></p>
-        <div style="display: flex; gap: 10px; align-items: center; margin-top: 10px;">
-          <input type="text" value={directLink} readOnly style="flex: 1; background-color: #f8f9fa;" />
-          <CopyButton idleClass="btn-secondary" failClass="btn-error" status={directStatus} onCopy={() => copyDirect(directLink)} />
-        </div>
-      </div>
-
-      <hr style="margin: 30px 0;" />
-
-      <div>
-        <p><strong>Create another link:</strong></p>
-        <a href="/" class="btn btn-primary">Create Another Link</a>
-      </div>
+      <a href="/" class="mt-12 inline-block text-sm underline underline-offset-4 hover:text-signal">
+        Cut your own link
+      </a>
     </div>
   )
 }

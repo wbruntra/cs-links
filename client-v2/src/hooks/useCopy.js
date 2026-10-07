@@ -1,20 +1,18 @@
 import { useState, useRef, useEffect } from 'preact/hooks'
 import { copyText } from '../clipboard.js'
 
-const DEFAULT_LABEL = 'Share Link'
-
-// Tracks the label of a copy button: 'Share Link' -> 'Copied!' | 'Copy Failed' -> back after 2s.
+// Tracks a copy button's state: 'idle' -> 'copied' | 'failed' -> back to 'idle' after 2s.
 export function useCopy() {
-  const [status, setStatus] = useState(DEFAULT_LABEL)
+  const [status, setStatus] = useState('idle')
   const timer = useRef()
 
   useEffect(() => () => clearTimeout(timer.current), [])
 
   async function copy(text) {
     const ok = await copyText(text)
-    setStatus(ok ? 'Copied!' : 'Copy Failed')
+    setStatus(ok ? 'copied' : 'failed')
     clearTimeout(timer.current)
-    timer.current = setTimeout(() => setStatus(DEFAULT_LABEL), 2000)
+    timer.current = setTimeout(() => setStatus('idle'), 2000)
   }
 
   return [status, copy]

@@ -9,10 +9,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "bootstrap": "^5.3.8",
-    "bootstrap-icons": "^1.13.1",
+    "@fontsource-variable/fraunces": "^5.3.0",
+    "@fontsource/ibm-plex-mono": "^5.3.0",
+    "@tailwindcss/vite": "^4.3.3",
     "preact": "^10.29.8",
-    "preact-iso": "^2.9.0"
+    "preact-iso": "^2.9.0",
+    "tailwindcss": "^4.3.3"
   },
   "devDependencies": {
     "@preact/preset-vite": "^2.10.6",

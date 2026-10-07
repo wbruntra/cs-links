@@ -1,6 +1,8 @@
 import { useState } from 'preact/hooks'
 import { useLocation } from 'preact-iso'
 import { API_BASE } from '../config.js'
+import { ArrowRight } from '../components/Icons.jsx'
+import { CutLine } from '../components/CutLine.jsx'
 
 export function HomeView() {
   const { route } = useLocation()
@@ -38,7 +40,6 @@ export function HomeView() {
         directLink: data.direct_link,
       })
 
-      // Navigate to the link display page
       route(`/link/${encodeURIComponent(code)}?${query}`)
     } catch (err) {
       setError(err.message || 'Failed to create link')
@@ -47,77 +48,50 @@ export function HomeView() {
   }
 
   return (
-    <div class="row justify-content-center">
-      <div class="col-md-8 col-lg-6">
-        <div class="card fade-in-up">
-          <div class="card-body text-center">
-            <div class="mb-4">
-              <i
-                class="bi bi-link-45deg"
-                style="font-size: 3rem; background: var(--primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;"
-              ></i>
-            </div>
+    <div class="motion-safe:animate-rise">
+      <h1 class="font-display text-[clamp(3.25rem,11vw,8rem)] font-semibold leading-[0.9] tracking-tight">
+        Long links,
+        <br />
+        <em class="font-medium text-signal">cut</em> down to size.
+      </h1>
 
-            <h1
-              class="card-title mb-2"
-              style="background: var(--primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-weight: 700;"
-            >
-              Create Short Link
-            </h1>
-            <p class="text-muted mb-4">Transform your long URLs into clean, shareable links</p>
+      <CutLine class="my-10 sm:my-14" />
 
-            <form onSubmit={createLink}>
-              <div class="mb-3 text-start">
-                <label for="address" class="form-label">
-                  <i class="bi bi-globe me-2"></i>
-                  Enter your URL
-                </label>
-                <input
-                  id="address"
-                  value={address}
-                  onInput={(e) => setAddress(e.currentTarget.value)}
-                  type="url"
-                  class="form-control"
-                  placeholder="https://example.com"
-                  required
-                  disabled={isLoading}
-                />
-                {/* Honeypot field - hidden from users but visible to bots */}
-                <input type="text" name="website" class="visually-hidden" />
-              </div>
+      <form onSubmit={createLink} class="motion-safe:animate-rise [animation-delay:150ms]">
+        <label for="address" class="font-display text-2xl font-semibold">
+          Paste a URL
+        </label>
 
-              <div class="d-grid">
-                <button
-                  type="submit"
-                  class={`btn btn-primary btn-lg${isLoading ? ' pulse' : ''}`}
-                  disabled={isLoading}
-                >
-                  {isLoading ? (
-                    <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                  ) : (
-                    <i class="bi bi-scissors me-2"></i>
-                  )}
-                  {isLoading ? 'Creating your link...' : 'Shorten URL'}
-                </button>
-              </div>
-            </form>
+        <div class="mt-3 flex flex-col gap-4 sm:flex-row">
+          <input
+            id="address"
+            type="url"
+            required
+            value={address}
+            onInput={(e) => setAddress(e.currentTarget.value)}
+            placeholder="https://example.com/a/very/long/path"
+            disabled={isLoading}
+            class="min-w-0 flex-1 border-2 border-ink bg-white px-5 py-4 text-base outline-none placeholder:text-muted/60 focus:shadow-hard-sm disabled:opacity-60"
+          />
+          {/* Honeypot field - hidden from users but visible to bots */}
+          <input type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" class="sr-only" />
 
-            {error && (
-              <div class="alert alert-danger mt-3 fade-in-up" role="alert">
-                <i class="bi bi-exclamation-triangle me-2"></i>
-                {error}
-              </div>
-            )}
-
-            <div class="mt-4 pt-3 border-top">
-              <small class="text-muted">
-                <i class="bi bi-shield-check me-1"></i>
-                Your links are secure and trackable
-              </small>
-            </div>
-          </div>
+          <button
+            type="submit"
+            disabled={isLoading}
+            class="group inline-flex items-center justify-center gap-3 border-2 border-ink bg-signal px-8 py-4 text-base font-semibold uppercase tracking-wider shadow-hard transition-all cursor-pointer hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-hard-sm active:translate-x-[5px] active:translate-y-[5px] active:shadow-none disabled:cursor-wait disabled:opacity-70"
+          >
+            {isLoading ? 'Cutting…' : 'Shorten'}
+            <ArrowRight class="transition-transform group-hover:translate-x-1" />
+          </button>
         </div>
-      </div>
+
+        {error && (
+          <p role="alert" class="mt-5 border-2 border-ink bg-signal/15 px-4 py-3 text-sm font-medium">
+            {error}
+          </p>
+        )}
+      </form>
     </div>
   )
 }
